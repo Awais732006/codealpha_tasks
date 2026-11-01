@@ -1,58 +1,60 @@
-# CodeAlpha C++ Projects
+# Banking System
 
-Three completed console projects covering Tasks 1, 3 and 4 of the supplied instructions. Each folder is an independent program with its own `main.cpp`. Compile and run one project at a time.
+## What it does
 
-## Contents
+A menu-driven educational simulation with separate Customer, Account and Transaction classes. It creates and renames customers, opens and closes accounts, deposits and withdraws funds, transfers funds, shows account details, and displays each account's ten latest transactions.
 
-| Folder | Assigned task | Main concepts |
-| --- | --- | --- |
-| CodeAlpha_CGPA_Calculator | Task 1 | Structures, vectors, weighted averages, input validation |
-| CodeAlpha_Sudoku_Solver | Task 3 | 2D arrays, recursion, backtracking |
-| CodeAlpha_Banking_System | Task 4 | Customer, Account and Transaction classes, vectors, menus |
+## Classes and storage
 
-Each project contains a README with its requirements, operation, example and explanation. `TEST_RESULTS.txt` contains actual test inputs and terminal output. `test_projects.py` reproduces the tests.
+| Class | Data |
+| --- | --- |
+| Customer | Customer ID and name |
+| Account | Account ID, customer ID and balance in paisa |
+| Transaction | Transaction ID, type, source, destination and amount |
+| Bank | Customer, account and transaction vectors; menu operations |
 
-## Run in Microsoft Visual Studio (Windows)
+One customer can own multiple accounts. IDs are generated automatically and are not reused during the session. Transaction history is kept in a vector and displayed newest first. History entries are retained internally if an empty account is closed. All data is cleared when the program exits; persistence is not part of this version.
 
-1. Open **Visual Studio**. The **Desktop development with C++** workload must be installed.
-2. Choose **Create a new project > Console App > C++**.
-3. Give the project the corresponding name from the table.
-4. Replace the generated `.cpp` file's contents with the selected project's `main.cpp`.
-5. Press **Ctrl+F5** to build and run.
-6. Enter input as shown in that project's README.
+## Example demonstration
 
-Use a separate Visual Studio project for each program. Combining the three files in one project causes multiple `main` function errors. No extra libraries or packages are required; the source uses standard C++11.
+Follow the prompts in this order:
 
-## Run with g++
+1. Choose 1, enter `Ali`. Customer ID is 1.
+2. Choose 1, enter `Sara`. Customer ID is 2.
+3. Choose 2, enter customer ID `1`. Account ID is 1001.
+4. Choose 2, enter customer ID `2`. Account ID is 1002.
+5. Choose 3, enter account `1001`, then amount `1000.50`.
+6. Choose 4, enter account `1001`, then amount `100`.
+7. Choose 5, enter source `1001`, destination `1002`, amount `200.25`.
+8. Choose 6 and enter `1001`: balance is PKR 700.25.
+9. Choose 6 and enter `1002`: balance is PKR 200.25.
+10. Choose 7 and enter either account ID to see its related transactions.
+11. Choose 0 to exit.
 
-Inside any one project folder:
+A transfer creates one shared transaction record that is visible in both accounts' histories. Deposits use source ID 0; withdrawals use destination ID 0. ID 0 means external cash, not a customer account.
+
+## Code explained simply
+
+`Bank` groups the account operations. `findAccount()` and `findCustomer()` search the vectors by ID. `readInt()` validates menu choices and IDs. `readMoney()` converts decimal text into whole paisa: PKR 10.25 becomes 1025. Using integer money avoids decimal floating-point rounding errors.
+
+`changeBalance()` handles both deposits and withdrawals. `transfer()` verifies both accounts, sufficient funds and the destination limit before changing either balance. `showHistory()` scans backwards and stops after ten matching records. `closeAccount()` only removes accounts with zero balance.
+
+## Input rules and scope
+
+- Names must contain a non-whitespace character.
+- Amounts must be positive with at most two decimal places. Use `1000.50`, without commas or a currency label.
+- Each transaction and each account balance is capped at PKR 1,000,000,000.00.
+- Rejects unknown accounts/customers, self-transfers, insufficient funds, excessive balances and closing a funded account.
+- This is a local practice program without authentication, interest, fees, database persistence or real banking integration. Do not enter real financial data.
+
+## Run
 
 ```sh
-g++ -std=c++11 -Wall -Wextra -Wpedantic main.cpp -o app
+g++ -std=c++11 main.cpp -o banking
 ```
 
-On Windows, run `app.exe` (or `./app.exe` in PowerShell). On Linux/macOS, run `./app`.
+Run `./banking` on Linux/macOS or `banking.exe` on Windows. See the package README for Visual Studio steps.
 
-## Verify all projects
+## Video outline
 
-From this package's root folder, with Python 3 and g++ installed:
-
-```sh
-python test_projects.py
-```
-
-The test script compiles every project, runs 17 test scenarios, checks results, and updates `TEST_RESULTS.txt`. Sudoku verification checks every row, column and 3x3 box and confirms all original clues are preserved. Test compilation treats compiler warnings as errors.
-
-## Submission steps from the supplied instructions
-
-1. Create separate GitHub repositories using the exact project folder names in the table, which follow `CodeAlpha_ProjectName`.
-2. Add each project's `main.cpp` and its README. Review the code and understand the explanation before recording.
-3. Record a short demonstration of each program: show the problem, explain the main functions, run a normal example, then show an error being handled.
-4. Follow the instructions to post your internship status and demonstration on LinkedIn, tagging CodeAlpha and including the relevant repository link.
-5. Submit the links through the form provided in your WhatsApp group within your assigned deadline.
-
-This package prepares the programs and explanations. GitHub repositories, LinkedIn posts, videos and submission-form entries still need to be completed. Task 2 (Login and Registration) is not included; the document permits any two or three of the four tasks.
-
-## Scope
-
-These are beginner-friendly educational console programs. The banking simulator keeps data in memory until exit; it does not implement real customer authentication, persistent storage or production banking services. The task does not explicitly require persistent banking storage. The Sudoku GUI is optional and is not included. The CGPA calculator uses numeric grade points on a 4.0 scale; use the grade points assigned by your university rather than raw marks.
+Introduce the three required classes. Demonstrate two customers and accounts, then deposit, withdraw and transfer. Show both balances and histories. Finally, attempt an excessive withdrawal and explain why validation prevents it.
